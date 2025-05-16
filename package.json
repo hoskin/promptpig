@@ -1,0 +1,31 @@
+{
+  "name": "tsprompt",
+  "type": "module",
+  "version": "1.0.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "import": "./dist/index.js",
+    "require": "./dist/index.cjs"
+  },
+  "scripts": {
+    "build": "bun run build.ts"
+  },
+  "files": ["dist"],
+  "keywords": ["typescript", "prompt", "prompts", "llm", "openai", "ai", "typed", "type-safe"],
+  "devDependencies": {
+    "@types/bun": "latest",
+    "bun-dts": "^0.1.23",
+    "prettier": "3.5.3"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "openai": "^4.98.0",
+    "partial-json": "^0.1.7",
+    "yaml": "^2.8.0",
+    "zod": "^3.24.4"
+  }
+}
