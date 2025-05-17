@@ -2,13 +2,15 @@ import { ZodArray, ZodObject, ZodString, type ZodTypeAny, z } from 'zod';
 import OpenAI from 'openai';
 import YAML from 'yaml';
 import PartialJSON from 'partial-json';
+import type { ChatCompletionContentPart } from 'openai/src/resources.js';
 
 /**
  * Options for initializing the PromptPig client.
  */
 type PromptPigOptions = {
   /**
-   * An existing OpenAI client instance. Required if `baseURL` and `apiKey` are not provided.
+   * An existing OpenAI client instance.
+   * Required if `baseURL` and `apiKey` are not provided.
    */
   openai?: OpenAI;
 
@@ -104,11 +106,11 @@ class PromptPig {
   /**
    * Create a new typed prompt using a template function.
    *
-   * @param template - A function that generates a prompt string from arguments
+   * @param template - A function that returns a prompt string or OpenAI "content" array
    * @param options - Optional model and schema for output validation
    */
   prompt<
-    Tmpl extends (...args: any[]) => string,
+    Tmpl extends (...args: any[]) => string | ChatCompletionContentPart[],
     Schm extends ZodTypeAny = ZodString,
   >(template: Tmpl, options?: PromptOptions<Schm>): Prompt<Tmpl, Schm> {
     const model = this.model ?? options?.model;
@@ -131,7 +133,7 @@ class PromptPig {
  * A prompt that can be run or streamed.
  */
 class Prompt<
-  Tmpl extends (...args: any[]) => string,
+  Tmpl extends (...args: any[]) => string | ChatCompletionContentPart[],
   Schm extends ZodTypeAny = ZodString,
 > {
   private template: Tmpl;
@@ -151,6 +153,7 @@ class Prompt<
 
   /**
    * Run the prompt once and validate the result.
+   * Takes the arguments from the template function.
    *
    * @returns Parsed result if valid, otherwise `undefined`.
    */
@@ -180,7 +183,9 @@ class Prompt<
   }
 
   /**
-   * Stream the result of the prompt. If the schema is an array, items will be streamed one-by-one.
+   * Stream the result of the prompt.
+   * Takes the arguments from the template function.
+   * If the schema is an array, items will be streamed one-by-one.
    */
   async *stream(...args: Parameters<Tmpl>): AsyncGenerator<StreamOutput<Schm>> {
     const content = this.template(...args);

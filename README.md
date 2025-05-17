@@ -54,6 +54,7 @@ const pp = new PromptPig({
 
 ```ts
 // A template is just a function that returns a prompt string
+// Can also return an OpenAI "content" array, e.g. with both text and image content
 const template = (country: string) => `\
 Generate 5 fake people who live in ${country}.
 Respond with a JSON array like:
