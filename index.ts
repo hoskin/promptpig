@@ -4,9 +4,9 @@ import YAML from 'yaml';
 import PartialJSON from 'partial-json';
 
 /**
- * Options for initializing the TSPrompt client.
+ * Options for initializing the PromptPig client.
  */
-type TSPromptOptions = {
+type PromptPigOptions = {
   /**
    * An existing OpenAI client instance. Required if `baseURL` and `apiKey` are not provided.
    */
@@ -82,18 +82,18 @@ const parseAny = (text: string) => {
  * Main client for creating and managing typed prompts.
  *
  * @example
- * const tsp = new TSPrompt({ baseURL: '...', apiKey: '...' });
- * const prompt = tsp.prompt((x) => `Say hello to ${x}`, { schema: z.string() });
+ * const pp = new PromptPig({ baseURL: '...', apiKey: '...' });
+ * const prompt = pp.prompt((x) => `Say hello to ${x}`, { schema: z.string() });
  * const result = await prompt.run('Alice');
  */
-class TSPrompt {
+class PromptPig {
   private openai: OpenAI;
   private model?: string;
 
-  constructor({ openai, baseURL, apiKey, model }: TSPromptOptions) {
+  constructor({ openai, baseURL, apiKey, model }: PromptPigOptions) {
     if (!openai && !(baseURL && apiKey)) {
       throw new Error(
-        'Either an openai object or a baseURL and apiKey need to be provided in the TSPrompt options.',
+        'Either an openai object or a baseURL and apiKey need to be provided in the PromptPig options.',
       );
     }
 
@@ -114,7 +114,7 @@ class TSPrompt {
     const model = this.model ?? options?.model;
     if (!model) {
       throw new Error(
-        'A model needs to be provided in the TSPrompt options or in the .prompt() options.',
+        'A model needs to be provided in the PromptPig options or in the .prompt() options.',
       );
     }
 
@@ -227,4 +227,4 @@ class Prompt<
   }
 }
 
-export { TSPrompt, z };
+export { PromptPig, z };

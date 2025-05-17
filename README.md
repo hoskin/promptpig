@@ -1,6 +1,6 @@
-# TSPrompt
+# 🐷 PromptPig
 
-**TSPrompt** is a lightweight TypeScript-first wrapper for LLMs like OpenAI, OpenRouter, and others. It helps you write structured, type-safe prompts by turning your templates into callable, validated functions.
+**PromptPig** is a lightweight TypeScript-first wrapper for LLMs like OpenAI, OpenRouter, and others. It helps you write structured, type-safe prompts by turning your templates into callable, validated functions.
 
 No more messy prompt spaghetti or unsafe parsing. Instead, clean and declarative LLM calls with full TypeScript support.
 
@@ -16,11 +16,11 @@ No more messy prompt spaghetti or unsafe parsing. Instead, clean and declarative
 ## 📦 Installation
 
 ```bash
-npm install tsprompt
+npm install promptpig
 # or
-bun install tsprompt
+bun install promptpig
 # or
-yarn add tsprompt
+yarn add promptpig
 ```
 
 ## 🚀 Quick Start
@@ -28,22 +28,22 @@ yarn add tsprompt
 ### 1. Setup
 
 ```ts
-import { TSPrompt, z } from 'tsprompt';
+import { PromptPig, z } from 'promptpig';
 import OpenAI from 'openai'; // if passing OpenAI object manually
 
 // Option A: Provide baseURL and apiKey for any OpenAI-compatible API
-const tsp = new TSPrompt({
+const pp = new PromptPig({
   baseURL: 'https://openrouter.ai/api/v1',
   apiKey: 'your-api-key',
 });
 
 // Option B: Pass an existing OpenAI client instance
-const tsp = new TSPrompt({
+const pp = new PromptPig({
   openai: new OpenAI({ apiKey: 'your-api-key' }),
 });
 
 // Optional: Pass a default model for all prompts
-const tsp = new TSPrompt({
+const pp = new PromptPig({
   baseURL: 'https://openrouter.ai/api/v1',
   apiKey: 'your-api-key',
   model: 'deepseek/deepseek-r1',
@@ -59,7 +59,7 @@ Generate 5 fake people who live in ${country}.
 Respond with a JSON array like:
 [{ "name": "Alice", "age": 30 }, ...]`;
 
-// If no schema is passed, TSPrompt assumes z.string()
+// If no schema is passed, PromptPig assumes z.string()
 const schema = z
   .array(
     z.object({
@@ -69,7 +69,7 @@ const schema = z
   )
   .length(5);
 
-const peoplePrompt = tsp.prompt(template, { schema });
+const peoplePrompt = pp.prompt(template, { schema });
 ```
 
 ### 3. Run the Prompt
@@ -84,7 +84,7 @@ if (people === undefined) return;
 console.log(people[4].name); // safely typed
 ```
 
-> For object or array schemas, TSPrompt extracts and parses content from the first JSON or YAML code block in the LLM's response. No need to worry about "Okay! Here you go:" type preamble.
+> For object or array schemas, PromptPig extracts and parses content from the first JSON or YAML code block in the LLM's response. No need to worry about "Okay! Here you go:" type preamble.
 
 ### 4. Stream Results
 
@@ -100,3 +100,7 @@ If the schema is a string or other format, raw chunks are streamed.
 ## 📄 License
 
 MIT
+
+## 😕 Why the name
+
+Idk. NPM wouldn't let me name the package any variation of TSPrompt or TypePrompt because of similarly named packages.
