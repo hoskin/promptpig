@@ -1,6 +1,6 @@
 # 🐷 PromptPig
 
-**PromptPig** is a lightweight TypeScript-first wrapper for LLMs like OpenAI, OpenRouter, and others. It helps you write structured, type-safe prompts by turning your templates into callable, validated functions.
+**PromptPig** is a simple TypeScript-first wrapper for LLMs like OpenAI, OpenRouter, and others. It helps you write structured, type-safe prompts by turning your templates into callable, validated functions.
 
 No more messy prompt spaghetti or unsafe parsing. Instead, clean and declarative LLM calls with full TypeScript support.
 
