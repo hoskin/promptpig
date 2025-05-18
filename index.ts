@@ -1,4 +1,11 @@
-import { ZodArray, ZodObject, ZodString, type ZodTypeAny, z } from 'zod';
+import {
+  ZodArray,
+  ZodObject,
+  ZodString,
+  type ZodTypeAny,
+  ZodUnion,
+  z,
+} from 'zod';
 import OpenAI from 'openai';
 import YAML from 'yaml';
 import PartialJSON from 'partial-json';
@@ -172,7 +179,8 @@ class Prompt<
 
     const schemaArray = this.schema instanceof ZodArray;
     const schemaObj = this.schema instanceof ZodObject;
-    const isCode = schemaArray || schemaObj;
+    const schemaUnion = this.schema instanceof ZodUnion;
+    const isCode = schemaArray || schemaObj || schemaUnion;
     const extract = isCode ? extractCode(msg) : msg;
 
     const schemaStr = this.schema instanceof ZodString;
