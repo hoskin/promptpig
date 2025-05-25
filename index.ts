@@ -58,6 +58,12 @@ type PromptOptions<Schm extends ZodTypeAny = ZodString> = {
 type StreamOutput<Schm extends ZodTypeAny> =
   Schm extends ZodArray<infer U> ? z.infer<U> : string;
 
+type MaybePromise<T> = T | Promise<T>;
+
+type TmplFn = (
+  ...args: any[]
+) => MaybePromise<string | ChatCompletionContentPart[]>;
+
 const extractCode = (text: string): string => {
   const codeBlockExp = /\n? *```\w* *\n?/g;
   const matches = [...text.matchAll(codeBlockExp)];
@@ -116,10 +122,10 @@ class PromptPig {
    * @param template - A function that returns a prompt string or OpenAI "content" array
    * @param options - Optional model and schema for output validation
    */
-  prompt<
-    Tmpl extends (...args: any[]) => string | ChatCompletionContentPart[],
-    Schm extends ZodTypeAny = ZodString,
-  >(template: Tmpl, options?: PromptOptions<Schm>): Prompt<Tmpl, Schm> {
+  prompt<Tmpl extends TmplFn, Schm extends ZodTypeAny = ZodString>(
+    template: Tmpl,
+    options?: PromptOptions<Schm>,
+  ): Prompt<Tmpl, Schm> {
     const model = this.model ?? options?.model;
     if (!model) {
       throw new Error(
@@ -139,10 +145,7 @@ class PromptPig {
 /**
  * A prompt that can be run or streamed.
  */
-class Prompt<
-  Tmpl extends (...args: any[]) => string | ChatCompletionContentPart[],
-  Schm extends ZodTypeAny = ZodString,
-> {
+class Prompt<Tmpl extends TmplFn, Schm extends ZodTypeAny = ZodString> {
   private template: Tmpl;
   private openai: OpenAI;
   private model: string;
@@ -165,7 +168,7 @@ class Prompt<
    * @returns Parsed result if valid, otherwise `undefined`.
    */
   async run(...args: Parameters<Tmpl>): Promise<z.infer<Schm> | undefined> {
-    const content = this.template(...args);
+    const content = await this.template(...args);
 
     const completion = await this.openai.chat.completions.create({
       model: this.model,
@@ -196,7 +199,7 @@ class Prompt<
    * If the schema is an array, items will be streamed one-by-one.
    */
   async *stream(...args: Parameters<Tmpl>): AsyncGenerator<StreamOutput<Schm>> {
-    const content = this.template(...args);
+    const content = await this.template(...args);
 
     const stream = await this.openai.chat.completions.create({
       model: this.model,
